@@ -5,32 +5,31 @@ import java.util.stream.IntStream;
 
 public class Main {
 
+    private static int size = 8;
+
     public static void main(final String... args) {
-        // wektory uczace
-        final int[] vector1 = new int[] {1, 1, 2, 2, 3, 3, 4, 4};
-        final int[] vector2 = new int[] {2, 2, 1, 1, 4, 4, 3, 3};
+        // wektor uczacy
+        final int[][] vector = new int[size][size];
+        fill(vector, 0);
+        vector[7][7] = 1;
 
         // wektor testujacy
-        final int[] vectorTest = new int[] {1, 1, 0, 0, 2, 3, 4, 5};
+        final int[][] vectorTest = new int[size][size];
+        fill(vectorTest, 1);
 
-        System.out.println("Wektory uczace:");
-
-        System.out.print("1) ");
-        print(vector1);
-
-        System.out.print("2) ");
-        print(vector2);
+        System.out.println("Wektor uczacy:");
+        print(vector);
 
         System.out.println("Wektor testujacy: ");
         print(vectorTest);
 
         // liczenie macierzy i wag
-        final int[][] weight = new int[vector1.length][vector2.length];
+        final int[][] weight = new int[size][size];
 
-        for(int i = 0; i < vector1.length; i++) {
-            for(int j = 0; j < vector2.length; j++) {
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
                 weight[i][j] = i != j
-                        ? ((2 * vector1[i] - 1) * (2 * vector1[j] - 1) + (2 * vector2[i] - 1) * (2 * vector2[j] - 1))
+                        ? (2 * vector[i][j] - 1) * (2 * vector[j][i] - 1)
                         : 0;
             }
         }
@@ -39,11 +38,11 @@ public class Main {
         print(weight);
 
         // mnozenie wektora testujacego przez macierz
-        final int[] multipleVector = new int[vector1.length];
+        final int[] multipleVector = new int[size];
 
-        for(int i = 0; i < vector1.length; i++) {
-            for(int j = 0; j < vector2.length; j++) {
-                multipleVector[i] += (vectorTest[j] * weight[i][j]);
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                multipleVector[i] += (vectorTest[i][j] * weight[i][j]);
             }
         }
 
@@ -51,18 +50,24 @@ public class Main {
         print(multipleVector);
 
         // koncowy wynik Y
-        final int[] result = new int[multipleVector.length];
+        final int[][] result = new int[size][size];
 
-        for(int i = 0; i < result.length; i++) {
-            result[i] = multipleVector[i] > 0
-                    ?  1
-                    : multipleVector[i] == 0
-                        ? vectorTest[i]
-                        : 0;
+        for(int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                result[i][j] = multipleVector[i] == 0
+                        ? vectorTest[i][j]
+                        : multipleVector[i] > 0 ? 1 : 0;
+            }
         }
 
         System.out.println("Wynik koncowy: ");
         print(result);
+    }
+
+    private static void fill(final int[][] matrix, final int value) {
+        for(int i = 0; i < matrix.length; i++) {
+            Arrays.fill(matrix[i], value);
+        }
     }
 
     private static void print(final int... vector) {
